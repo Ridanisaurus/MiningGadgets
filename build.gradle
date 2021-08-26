@@ -4,25 +4,27 @@ import groovy.json.JsonOutput
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 version = "${mod_version}"
 group = 'com.direwolf20.mininggadgets' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'mininggadgets'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 minecraft {
+    hideOfficialWarningUntilChanged
+
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
     // stable_#            Stables are built at the discretion of the MCP team.
@@ -77,8 +79,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'mininggadgets', '--all', '--output', rootProject.file('src/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
-
+            args '--mod', 'mininggadgets', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods {
                 mininggadgets {
                     source sourceSets.main
@@ -91,28 +92,26 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    // JEI
     maven {
-        // JEI
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
+    //JEI fallback
     maven {
-        //JEI fallback
         name = "ModMaven"
         url = "https://modmaven.k-4u.nl"
     }
+    maven { url 'https://www.dogforce-games.com/maven/' }
     maven {
-        url 'https://www.dogforce-games.com/maven/'
-    }
-    maven {
-        url 'https://www.cursemaven.com'
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
     }
 }
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     //JEI
@@ -120,38 +119,14 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
 //    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
-
-    // You may put jars on which you depend on in ./libs or you may define them like so..
-    // compile "some.group:artifact:version:classifier"
-    // compile "some.group:artifact:version"
-
-    // Real examples
-    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // These dependencies get remapped to your current MCP mappings
-    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // For more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+//--
+//    runtimeOnly fg.deobf("curse.maven:lollipop-347954:3232534")
+//    runtimeOnly fg.deobf("curse.maven:powah-352656:352656")
+//    runtimeOnly fg.deobf("curse.maven:mekanism-268560:268560")
 }
 
 processResources {
-    inputs.property 'version', project.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        expand 'version': project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
-    }
+    duplicatesStrategy = DuplicatesStrategy.INHERIT
 
 	doLast {
 	

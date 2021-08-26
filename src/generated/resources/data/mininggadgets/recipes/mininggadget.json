@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "dii",
+    "dig",
     "dur",
-    "dii"
+    "dig"
   ],
   "key": {
     "u": {
@@ -17,6 +17,9 @@
     },
     "d": {
       "tag": "forge:gems/diamond"
+    },
+    "g": {
+      "tag": "forge:ingots/gold"
     }
   },
   "result": {

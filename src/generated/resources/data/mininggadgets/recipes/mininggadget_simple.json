@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "dig",
+    "dur",
+    "dii"
+  ],
+  "key": {
+    "u": {
+      "item": "mininggadgets:upgrade_empty"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "d": {
+      "tag": "forge:gems/diamond"
+    },
+    "g": {
+      "tag": "forge:ingots/gold"
+    }
+  },
+  "result": {
+    "item": "mininggadgets:mininggadget_simple"
+  }
+}
